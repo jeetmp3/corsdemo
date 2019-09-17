@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <context:component-scan base-package="demo.cors"/>
+    <mvc:annotation-driven/>
+
+    <bean id="corsFilter" class="com.thetransactioncompany.cors.CORSFilter">
+        <constructor-arg>
+            <bean class="com.thetransactioncompany.cors.CORSConfiguration">
+                <constructor-arg>
+                    <!-- Now Spring could extract those props from anywhere: file, database etc -->
+                    <props>
+                        <prop key="cors.allowOrigin">${cors.allowed.origin}</prop>
+<!--                        <prop key="cors.allowOrigin">*</prop>-->
+                        <prop key="allowSubdomains">true</prop>
+                        <prop key="supportedHeaders">X-App-Name</prop>
+                        <prop key="cors.supportedMethods">GET, POST, HEAD, OPTIONS, PUT, DELETE</prop>
+                    </props>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>file:/usr/local/tomcat/webapps/config.properties</value>
+        </property>
+    </bean>
+
+    <bean id="my-filter" class="demo.cors.filters.MyFilter">
+        <constructor-arg value="${cors.allowed.origin}"/>
+    </bean>
+</beans>
